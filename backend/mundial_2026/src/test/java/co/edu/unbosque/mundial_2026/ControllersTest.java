@@ -290,4 +290,26 @@ void producto_listarTodosAdmin_retornaOk() {
     ResponseEntity<?> res = productoController.listarTodosAdmin();
     assertEquals(200, res.getStatusCode().value());
 }
+
+@Test
+void usuario_listarTodos_retornaOk() {
+    when(usuarioService.listarTodos()).thenReturn(List.of());
+    ResponseEntity<?> res = usuarioController.listarTodos();
+    assertEquals(200, res.getStatusCode().value());
+}
+
+@Test
+void usuario_obtenerUsuario_retornaOk() {
+    when(usuarioService.obtenerUsuario(1L))
+        .thenReturn(new co.edu.unbosque.mundial_2026.dto.response.UsuarioResponseDTO());
+    ResponseEntity<?> res = usuarioController.obtenerUsuario(1L);
+    assertEquals(200, res.getStatusCode().value());
+}
+
+@Test
+void usuario_eliminarUsuario_retornaNoContent() {
+    doNothing().when(usuarioService).eliminarUsuario(1L);
+    ResponseEntity<?> res = usuarioController.eliminarUsuario(1L);
+    assertEquals(204, res.getStatusCode().value());
+}
 }
