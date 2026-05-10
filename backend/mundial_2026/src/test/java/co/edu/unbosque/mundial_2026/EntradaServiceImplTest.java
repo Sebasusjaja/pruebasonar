@@ -328,4 +328,65 @@ class EntradaServiceImplTest {
 
         verify(entradaRepository, never()).save(any());
     }
+    @Test
+void confirmarPago_reservaExpirada_lanzaExcepcion() {
+    Usuario usuario = crearUsuario(1L, "user@test.com");
+    Partido partido = crearPartido(1L, 100);
+    Entrada entrada = crearEntrada(1L, usuario, partido, "RESERVADA", 2);
+    entrada.setTtlReserva(LocalDateTime.now().minusMinutes(1));
+
+    when(entradaRepository.findById(1L)).thenReturn(Optional.of(entrada));
+
+    assertThrows(EstadoInvalidoException.class,
+            () -> service.confirmarPago(1L, "pm_test"));
+}
+
+@Test
+void confirmarPago_entradaNoBservada_lanzaExcepcion() {
+    Usuario usuario = crearUsuario(1L, "user@test.com");
+    Partido partido = crearPartido(1L, 100);
+    Entrada entrada = crearEntrada(1L, usuario, partido, "PAGADA", 2);
+
+    when(entradaRepository.findById(1L)).thenReturn(Optional.of(entrada));
+
+    assertThrows(EstadoInvalidoException.class,
+            () -> service.confirmarPago(1L, "pm_test"));
+}
+
+@Test
+void confirmarPago_entradaNoExiste_lanzaExcepcion() {
+    when(entradaRepository.findById(99L)).thenReturn(Optional.empty());
+
+    assertThrows(EntradaNotFoundException.class,
+            () -> service.confirmarPago(99L, "pm_test"));
+}
+
+@Test
+void reembolsarEntrada_entradaNoExiste_lanzaExcepcion() {
+    Usuario usuario = crearUsuario(1L, "user@test.com");
+    when(usuarioService.obtenerEntidadPorCorreo("user@test.com")).thenReturn(usuario);
+    when(entradaRepository.findById(99L)).thenReturn(Optional.empty());
+
+    assertThrows(EntradaNotFoundException.class,
+            () -> service.reembolsarEntrada("user@test.com", 99L));
+}
+
+@Test
+void transferirEntrada_superaLimiteDiario_lanzaExcepcion() {
+    Usuario usuario = crearUsuario(1L, "user@test.com");
+    Partido partido = crearPartido(1L, 100);
+    Entrada entrada = crearEntrada(1L, usuario, partido, "PAGADA", 2);
+    Entrada transferida = crearEntrada(2L, usuario, partido, "TRANSFERIDA", 10);
+
+    TransferenciaRequestDTO dto = new TransferenciaRequestDTO();
+    dto.setCorreoDestino("destino@test.com");
+
+    when(usuarioService.obtenerEntidadPorCorreo("user@test.com")).thenReturn(usuario);
+    when(entradaRepository.findById(1L)).thenReturn(Optional.of(entrada));
+    when(entradaRepository.findByUsuarioIdAndFechaCompraBetween(eq(1L), any(), any()))
+            .thenReturn(List.of(transferida));
+
+    assertThrows(LimiteSuperadoException.class,
+            () -> service.transferirEntrada(1L, dto, "user@test.com"));
+}
 }
