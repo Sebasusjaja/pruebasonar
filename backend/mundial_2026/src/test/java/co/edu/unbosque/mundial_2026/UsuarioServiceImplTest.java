@@ -8,7 +8,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-
+import co.edu.unbosque.mundial_2026.service.NotificacionService;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -57,6 +57,8 @@ public class UsuarioServiceImplTest {
 
     @Mock
     private CiudadRepository ciudadRepository;
+    @Mock
+private NotificacionService notificacionService;
 
     @InjectMocks
     private UsuarioServiceImpl service;

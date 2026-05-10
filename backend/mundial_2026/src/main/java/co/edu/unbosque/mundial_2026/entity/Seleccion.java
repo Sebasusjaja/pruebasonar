@@ -22,6 +22,7 @@ public class Seleccion {
     private List<Usuario> usuarios;
 
     public Seleccion() {
+        //Constructor vacio
     }
 
     public Long getId() {

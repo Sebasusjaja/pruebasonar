@@ -33,12 +33,21 @@ public class Partido {
 
     @Column(name = "seleccion_visitante")
     private String seleccionVisitante;
+    @Column(name = "capacidad_disponible")
+    private Integer capacidadDisponible;
 
+    public Integer getCapacidadDisponible() {
+        return capacidadDisponible;
+    }
 
+    public void setCapacidadDisponible(Integer capacidadDisponible) {
+        this.capacidadDisponible = capacidadDisponible;
+    }
 
     private String estadio;
 
     public Partido() {
+        //Constructor vacio
     }
 
     public Long getId() {

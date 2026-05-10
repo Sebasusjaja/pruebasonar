@@ -146,7 +146,7 @@ export default function Matches() {
             type="date"
             value={fechaFilter}
             onChange={(e) => setFechaFilter(e.target.value)}
-            InputLabelProps={{ shrink: true }}
+           slotProps={{ inputLabel: { shrink: true } }}
             sx={{ minWidth: 200 }}
           />
           <Button variant="outlined" onClick={buscarPorFecha}>Buscar por fecha</Button>
@@ -173,14 +173,14 @@ export default function Matches() {
               <Stack spacing={0.5}>
                 <Stack direction="row" spacing={1.5} alignItems="center" useFlexGap flexWrap="wrap">
                   {match.home.logo
-                    ? <img src={match.home.logo} width={28} height={28} style={{ verticalAlign: "middle" }} />
+                    ? <img src={match.home.logo} alt={match.home.name} width={28} height={28} style={{ verticalAlign: "middle" }} />
                     : <Typography sx={{ fontSize: 22 }}>🏳️</Typography>
                   }
                   <Typography sx={{ fontWeight: 900 }}>
                     {match.home.name} vs {match.away.name}
                   </Typography>
                   {match.away.logo
-                    ? <img src={match.away.logo} width={28} height={28} style={{ verticalAlign: "middle" }} />
+                    ? <img src={match.away.logo} alt={match.away.name} width={28} height={28} style={{ verticalAlign: "middle" }} />
                     : <Typography sx={{ fontSize: 22 }}>🏳️</Typography>
                   }
                 </Stack>

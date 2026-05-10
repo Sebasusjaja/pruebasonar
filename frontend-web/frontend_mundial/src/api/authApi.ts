@@ -1,7 +1,9 @@
 import { USE_MOCK } from "./config";
 import { http, setAuthToken, getAuthToken } from "./http";
 import { createSystemEvent } from "./eventsApi";
-
+import { registrarFcmToken } from "./notificationApi";
+import { getToken } from "firebase/messaging";
+import { messaging, VAPID_KEY } from "../firebaseConfig";
 import type { Role, CurrentUser } from "../context/AppContext";
 
 export type LoginResponse = { token: string; user: CurrentUser };
@@ -61,12 +63,15 @@ function buildMockUser(
   avatarUrl = ""
 ): CurrentUser {
   const key = email.trim().toLowerCase() || name.trim().toLowerCase();
-  const mockId =
-    key === "sara"
-      ? "u1"
-      : key === "juan"
-      ? "u2"
-      : `u_${key.replace(/\s+/g, "_")}`;
+  
+  let mockId: string;
+  if (key === "sara") {
+    mockId = "u1";
+  } else if (key === "juan") {
+    mockId = "u2";
+  } else {
+    mockId = `u_${key.replaceAll(" ", "_")}`;
+  }
 
   return {
     id: mockId,
@@ -119,22 +124,40 @@ export async function loginApi(
       data: { role: user.role },
     });
 
+   
+    void (async () => {
+      try {
+        const permiso = await Notification.requestPermission();
+        if (permiso !== "granted") return;
+        const fcmToken = await getToken(messaging, { vapidKey: VAPID_KEY });
+        if (fcmToken) await registrarFcmToken(fcmToken);
+      } catch {
+
+      }
+    })();
+
     return { token: res.token, user };
   }
 
-  const lowerUser = trimmed.toLowerCase();
-  const role: Role =
-    lowerUser.includes("admin") || password === "Admin2026*"
-      ? "admin"
-      : lowerUser.includes("soporte") ||
-        lowerUser.includes("support") ||
-        password === "Soporte2026*"
-      ? "support"
-      : "user";
-  const user = buildMockUser(trimmed, role, "", trimmed.includes("@") ? trimmed : "");
-  const token = buildMockToken(user);
+ const lowerUser = trimmed.toLowerCase();
 
-  setAuthToken(token);
+let role: Role;
+if (lowerUser.includes("admin") || password === "Admin2026*") {
+  role = "admin";
+} else if (
+  lowerUser.includes("soporte") ||
+  lowerUser.includes("support") ||
+  password === "Soporte2026*"
+) {
+  role = "support";
+} else {
+  role = "user";
+}
+
+const user = buildMockUser(trimmed, role, "", trimmed.includes("@") ? trimmed : "");
+const token = buildMockToken(user);
+
+setAuthToken(token);
 
   await createSystemEvent({
     type: "AUTH_LOGIN",

@@ -7,6 +7,7 @@ import co.edu.unbosque.mundial_2026.dto.request.UsuarioActualizarRequestDTO;
 import co.edu.unbosque.mundial_2026.dto.request.UsuarioRequestDTO;
 import co.edu.unbosque.mundial_2026.dto.response.PreferenciaDTO;
 import co.edu.unbosque.mundial_2026.dto.response.UsuarioResponseDTO;
+import co.edu.unbosque.mundial_2026.entity.Usuario;
 
 
 
@@ -36,4 +37,8 @@ public interface UsuarioService {
     // Catálogos generales (para selectores del front)
     List<PreferenciaDTO> listarEstadios();
     List<PreferenciaDTO> listarCiudades();
+    Usuario obtenerEntidadPorId(Long usuarioId);
+    Usuario obtenerEntidadPorCorreo(String correo);
+    void actualizarFcmToken(String correo, String fcmToken);
+    
 }

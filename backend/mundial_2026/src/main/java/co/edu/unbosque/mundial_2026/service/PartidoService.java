@@ -2,7 +2,7 @@ package co.edu.unbosque.mundial_2026.service;
 
 import java.util.List;
 
-import co.edu.unbosque.mundial_2026.dto.response.EquipoConEstadioDTO;
+import co.edu.unbosque.mundial_2026.dto.PartidoCapacidadDTO;
 import co.edu.unbosque.mundial_2026.dto.response.EquipoMundialDTO;
 import co.edu.unbosque.mundial_2026.dto.response.JugadorDTO;
 import co.edu.unbosque.mundial_2026.dto.response.PartidoDTO;
@@ -41,4 +41,9 @@ List<PartidoDTO> obtenerPartidosPorCiudadesFav(String correo);
     List<Partido> filtrarPorEstadio(String nombre);
     List<Partido> filtrarPorCiudad(String nombre);
 List<PreferenciaDTO> obtenerCatalogoSelecciones();
+Partido obtenerPartidoEntidadPorId(Long partidoId);
+void actualizarCapacidad(Long partidoId, int cantidad);
+List<PartidoCapacidadDTO> listarPartidosConCapacidad();
+List<Partido> listarDesdeBD();
+
 }
