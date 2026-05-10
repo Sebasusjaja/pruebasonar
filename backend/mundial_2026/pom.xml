@@ -26,6 +26,9 @@
             **/RestClientConfig.java,
             **/FireBaseConfig.java
         </sonar.exclusions>
+        <sonar.cpd.exclusions>
+            **/exception/GlobalExceptionHandler.java
+        </sonar.cpd.exclusions>
     </properties>
     <dependencies>
         <dependency>
