@@ -174,14 +174,14 @@ useEffect(() => {
                 <Paper key={match.id} variant="outlined" sx={{ p: 1.5 }}>
                   <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
                     {match.home.logo
-                      ? <img src={match.home.logo} width={24} height={24} loading="lazy" style={{ verticalAlign: "middle" }} />
+                      ? <img src={match.home.logo} alt={match.home.name} width={24} height={24} loading="lazy" style={{ verticalAlign: "middle" }} />
                       : <Typography sx={{ fontSize: 18 }}>🏳️</Typography>
                     }
                     <Typography sx={{ fontWeight: 700 }}>
                       {match.home.name} vs {match.away.name}
                     </Typography>
                     {match.away.logo
-                      ? <img src={match.away.logo} width={24} height={24} loading="lazy" style={{ verticalAlign: "middle" }} />
+                      ? <img src={match.away.logo} alt={match.away.name} width={24} height={24} loading="lazy" style={{ verticalAlign: "middle" }} />
                       : <Typography sx={{ fontSize: 18 }}>🏳️</Typography>
                     }
                   </Stack>
