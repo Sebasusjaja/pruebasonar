@@ -14,6 +14,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.stripe.model.PaymentIntent;
+import com.stripe.model.Refund;
+import com.stripe.param.PaymentIntentCreateParams;
+import com.stripe.param.RefundCreateParams;
+
 import co.edu.unbosque.mundial_2026.dto.request.EntradaRequestDTO;
 import co.edu.unbosque.mundial_2026.dto.request.TransferenciaRequestDTO;
 import co.edu.unbosque.mundial_2026.dto.response.EntradaResponseDTO;
@@ -373,5 +378,89 @@ void reembolsarEntrada_entradaNoExiste_lanzaExcepcion() {
 
 
 
+@Test
+void confirmarPago_stripeExitoso_retornaDTO() throws Exception {
+    Usuario usuario = crearUsuario(1L, "user@test.com");
+    Partido partido = crearPartido(1L, 100);
+    Entrada entrada = crearEntrada(1L, usuario, partido, "RESERVADA", 2);
+    entrada.setTtlReserva(LocalDateTime.now().plusMinutes(15));
 
+    when(entradaRepository.findById(1L)).thenReturn(Optional.of(entrada));
+    when(entradaRepository.save(any())).thenReturn(entrada);
+    doNothing().when(auditoriaService).registrar(any(), any(), any(), any(), any());
+
+    try (org.mockito.MockedStatic<PaymentIntent> mockedPI = mockStatic(PaymentIntent.class)) {
+        PaymentIntent mockIntent = mock(PaymentIntent.class);
+        when(mockIntent.getId()).thenReturn("pi_test123");
+        mockedPI.when(() -> PaymentIntent.create(any(PaymentIntentCreateParams.class)))
+                .thenReturn(mockIntent);
+
+        EntradaResponseDTO resultado = service.confirmarPago(1L, "pm_test");
+        assertNotNull(resultado);
+        assertEquals("PAGADA", entrada.getEstado());
+    }
+}
+
+@Test
+void confirmarPago_stripeFalla_lanzaExcepcion() throws Exception {
+    Usuario usuario = crearUsuario(1L, "user@test.com");
+    Partido partido = crearPartido(1L, 100);
+    Entrada entrada = crearEntrada(1L, usuario, partido, "RESERVADA", 2);
+    entrada.setTtlReserva(LocalDateTime.now().plusMinutes(15));
+
+    when(entradaRepository.findById(1L)).thenReturn(Optional.of(entrada));
+    doNothing().when(auditoriaService).registrar(any(), any(), any(), any(), any());
+
+    try (org.mockito.MockedStatic<PaymentIntent> mockedPI = mockStatic(PaymentIntent.class)) {
+        mockedPI.when(() -> PaymentIntent.create(any(PaymentIntentCreateParams.class)))
+                .thenThrow(new com.stripe.exception.CardException("card error", "req_1", "card_declined", "card_declined", "card_declined", null, 402, null));
+
+        assertThrows(PagoStripeException.class,
+                () -> service.confirmarPago(1L, "pm_test"));
+    }
+}
+
+@Test
+void reembolsarEntrada_stripeExitoso_retornaDTO() throws Exception {
+    Usuario usuario = crearUsuario(1L, "user@test.com");
+    Partido partido = crearPartido(1L, 100);
+    Entrada entrada = crearEntrada(1L, usuario, partido, "PAGADA", 2);
+    entrada.setPaymentRef("pi_test123");
+
+    when(usuarioService.obtenerEntidadPorCorreo("user@test.com")).thenReturn(usuario);
+    when(entradaRepository.findById(1L)).thenReturn(Optional.of(entrada));
+    when(entradaRepository.save(any())).thenReturn(entrada);
+    doNothing().when(partidoService).actualizarCapacidad(anyLong(), anyInt());
+    doNothing().when(auditoriaService).registrar(any(), any(), any(), any(), any());
+
+    try (org.mockito.MockedStatic<Refund> mockedRefund = mockStatic(Refund.class)) {
+        Refund mockRefund = mock(Refund.class);
+        mockedRefund.when(() -> Refund.create(any(RefundCreateParams.class)))
+                .thenReturn(mockRefund);
+
+        EntradaResponseDTO resultado = service.reembolsarEntrada("user@test.com", 1L);
+        assertNotNull(resultado);
+        assertEquals("REEMBOLSADA", entrada.getEstado());
+    }
+}
+
+@Test
+void reembolsarEntrada_stripeFalla_lanzaExcepcion() throws Exception {
+    Usuario usuario = crearUsuario(1L, "user@test.com");
+    Partido partido = crearPartido(1L, 100);
+    Entrada entrada = crearEntrada(1L, usuario, partido, "PAGADA", 2);
+    entrada.setPaymentRef("pi_test123");
+
+    when(usuarioService.obtenerEntidadPorCorreo("user@test.com")).thenReturn(usuario);
+    when(entradaRepository.findById(1L)).thenReturn(Optional.of(entrada));
+    doNothing().when(auditoriaService).registrar(any(), any(), any(), any(), any());
+
+    try (org.mockito.MockedStatic<Refund> mockedRefund = mockStatic(Refund.class)) {
+        mockedRefund.when(() -> Refund.create(any(RefundCreateParams.class)))
+                .thenThrow(new com.stripe.exception.CardException("card error", "req_1", "card_declined", "card_declined", "card_declined", null, 402, null));
+
+        assertThrows(PagoStripeException.class,
+                () -> service.reembolsarEntrada("user@test.com", 1L));
+    }
+}
 }
