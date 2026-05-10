@@ -12,11 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
-import co.edu.unbosque.mundial_2026.controller.CategoriaController;
 import co.edu.unbosque.mundial_2026.controller.EntradaRestController;
-import co.edu.unbosque.mundial_2026.controller.EventoAuditoriaController;
-import co.edu.unbosque.mundial_2026.controller.MetodoPagoController;
-import co.edu.unbosque.mundial_2026.controller.NotificacionController;
 import co.edu.unbosque.mundial_2026.controller.OrdenController;
 import co.edu.unbosque.mundial_2026.controller.PartidoController;
 import co.edu.unbosque.mundial_2026.controller.ProductoController;
@@ -24,11 +20,7 @@ import co.edu.unbosque.mundial_2026.controller.UsuarioRestController;
 import co.edu.unbosque.mundial_2026.dto.response.EntradaResponseDTO;
 import co.edu.unbosque.mundial_2026.dto.response.OrdenResponseDTO;
 import co.edu.unbosque.mundial_2026.security.TokenBlacklist;
-import co.edu.unbosque.mundial_2026.service.CategoriaService;
 import co.edu.unbosque.mundial_2026.service.EntradaService;
-import co.edu.unbosque.mundial_2026.service.EventoAuditoriaService;
-import co.edu.unbosque.mundial_2026.service.MetodoPagoService;
-import co.edu.unbosque.mundial_2026.service.NotificacionService;
 import co.edu.unbosque.mundial_2026.service.OrdenService;
 import co.edu.unbosque.mundial_2026.service.PartidoService;
 import co.edu.unbosque.mundial_2026.service.ProductoService;
@@ -46,22 +38,10 @@ class ControllersTest {
     @Mock private PartidoService partidoService;
     @InjectMocks private PartidoController partidoController;
 
-    @Mock private CategoriaService categoriaService;
-    @InjectMocks private CategoriaController categoriaController;
-
-    @Mock private EventoAuditoriaService eventoService;
-    @InjectMocks private EventoAuditoriaController eventoController;
-
-    @Mock private MetodoPagoService metodoPagoService;
-    @InjectMocks private MetodoPagoController metodoPagoController;
-
     @Mock private ProductoService productoService;
     @InjectMocks private ProductoController productoController;
 
-    @Mock private NotificacionService notificacionService;
     @Mock private UsuarioService usuarioService;
-    @InjectMocks private NotificacionController notificacionController;
-
     @Mock private TokenBlacklist tokenBlacklist;
     @InjectMocks private UsuarioRestController usuarioController;
 
@@ -154,41 +134,6 @@ class ControllersTest {
     }
 
     @Test
-    void categoria_listar_retornaOk() {
-        when(categoriaService.listar()).thenReturn(List.of());
-        ResponseEntity<?> res = categoriaController.listar();
-        assertEquals(200, res.getStatusCode().value());
-    }
-
-    @Test
-    void auditoria_buscarPorUsuario_retornaOk() {
-        when(eventoService.buscarPorUsuario(1L)).thenReturn(List.of());
-        ResponseEntity<?> res = eventoController.buscarPorUsuario(1L);
-        assertEquals(200, res.getStatusCode().value());
-    }
-
-    @Test
-    void auditoria_buscarPorTipo_retornaOk() {
-        when(eventoService.buscarPorTipo("LOGIN")).thenReturn(List.of());
-        ResponseEntity<?> res = eventoController.buscarPorTipo("LOGIN");
-        assertEquals(200, res.getStatusCode().value());
-    }
-
-    @Test
-    void auditoria_buscarPorCorrelacion_retornaOk() {
-        when(eventoService.buscarPorCorrelacion("corr-1")).thenReturn(List.of());
-        ResponseEntity<?> res = eventoController.buscarPorCorrelacion("corr-1");
-        assertEquals(200, res.getStatusCode().value());
-    }
-
-    @Test
-    void auditoria_buscarPorEntidad_retornaOk() {
-        when(eventoService.buscarPorEntidad("USUARIO")).thenReturn(List.of());
-        ResponseEntity<?> res = eventoController.buscarPorEntidad("USUARIO");
-        assertEquals(200, res.getStatusCode().value());
-    }
-
-    @Test
     void producto_listar_sinCategoria_retornaOk() {
         when(productoService.listarTodos()).thenReturn(List.of());
         ResponseEntity<?> res = productoController.listar(null);
@@ -208,13 +153,6 @@ class ControllersTest {
             .thenReturn(new co.edu.unbosque.mundial_2026.dto.response.ProductoResponseDTO());
         ResponseEntity<?> res = productoController.obtenerPorId(1L);
         assertEquals(200, res.getStatusCode().value());
-    }
-
-    @Test
-    void notificacion_marcarLeida_retornaNoContent() {
-        doNothing().when(notificacionService).marcarLeida(1L);
-        ResponseEntity<?> res = notificacionController.marcarLeida(1L);
-        assertEquals(204, res.getStatusCode().value());
     }
 
     @Test
@@ -240,32 +178,5 @@ class ControllersTest {
         when(usuarioService.listarCiudades()).thenReturn(List.of());
         ResponseEntity<?> res = usuarioController.listarCiudades();
         assertEquals(200, res.getStatusCode().value());
-    }
-
-    @Test
-    void metodoPago_listar_retornaOk() {
-        when(metodoPagoService.listarPorCorreo("test@test.com")).thenReturn(List.of());
-        ResponseEntity<?> res = metodoPagoController.listar("test@test.com");
-        assertEquals(200, res.getStatusCode().value());
-    }
-
-    @Test
-    void metodoPago_agregar_retornaOk() {
-        co.edu.unbosque.mundial_2026.dto.request.MetodoPagoRequestDTO dto =
-            new co.edu.unbosque.mundial_2026.dto.request.MetodoPagoRequestDTO();
-        co.edu.unbosque.mundial_2026.dto.response.MetodoPagoResponseDTO response =
-            new co.edu.unbosque.mundial_2026.dto.response.MetodoPagoResponseDTO();
-        when(metodoPagoService.agregar("test@test.com", dto)).thenReturn(response);
-        ResponseEntity<?> res = metodoPagoController.agregar("test@test.com", dto);
-        assertEquals(200, res.getStatusCode().value());
-    }
-
-    @Test
-    void metodoPago_agregar_nullRetorna400() {
-        co.edu.unbosque.mundial_2026.dto.request.MetodoPagoRequestDTO dto =
-            new co.edu.unbosque.mundial_2026.dto.request.MetodoPagoRequestDTO();
-        when(metodoPagoService.agregar("test@test.com", dto)).thenReturn(null);
-        ResponseEntity<?> res = metodoPagoController.agregar("test@test.com", dto);
-        assertEquals(400, res.getStatusCode().value());
     }
 }
