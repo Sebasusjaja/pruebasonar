@@ -137,4 +137,39 @@ class ErrorHandlerExceptionTest {
         ResponseEntity<?> res = handler.handleCategoriaYaExiste(new CategoriaYaExisteException("ya existe"));
         assertEquals(HttpStatus.CONFLICT, res.getStatusCode());
     }
+    @Test
+void apuestaCerradaException_tienemensaje() {
+    ApuestaCerradaException e = new ApuestaCerradaException("cerrada");
+    assertEquals("cerrada", e.getMessage());
+}
+
+@Test
+void apuestaNotFoundException_tienemensaje() {
+    ApuestaNotFoundException e = new ApuestaNotFoundException("no existe");
+    assertEquals("no existe", e.getMessage());
+}
+
+@Test
+void codigoInvalidoException_tienemensaje() {
+    CodigoInvalidoException e = new CodigoInvalidoException("invalido");
+    assertEquals("invalido", e.getMessage());
+}
+
+@Test
+void participacionNotFoundException_tienemensaje() {
+    ParticipacionNotFoundException e = new ParticipacionNotFoundException("no existe");
+    assertEquals("no existe", e.getMessage());
+}
+
+@Test
+void usuarioYaEnApuestaException_tienemensaje() {
+    UsuarioYaEnApuestaException e = new UsuarioYaEnApuestaException("ya existe");
+    assertEquals("ya existe", e.getMessage());
+}
+
+@Test
+void pronosticoNotFoundException_tienemensaje() {
+    PronosticoNotFoundException e = new PronosticoNotFoundException("no existe");
+    assertEquals("no existe", e.getMessage());
+}
 }

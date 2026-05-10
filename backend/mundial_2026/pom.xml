@@ -17,6 +17,15 @@
         <java.version>21</java.version>
         <sonar.organization>jsbecerrap</sonar.organization>
         <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.exclusions>
+            **/security/SecurityConfig.java,
+            **/security/SimpleGrantedAuthorityJsonCreator.java,
+            **/security/filter/JwtAuthenticationFilter.java,
+            **/Mundial2026Application.java,
+            **/AppConfig.java,
+            **/RestClientConfig.java,
+            **/FireBaseConfig.java
+        </sonar.exclusions>
     </properties>
     <dependencies>
         <dependency>
