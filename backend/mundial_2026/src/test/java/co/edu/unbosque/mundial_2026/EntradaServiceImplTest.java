@@ -372,11 +372,12 @@ void reembolsarEntrada_entradaNoExiste_lanzaExcepcion() {
 }
 
 
+
 @Test
 void transferirEntrada_superaLimiteDiario_lanzaExcepcion() {
     Usuario usuario = crearUsuario(1L, "user@test.com");
     Partido partido = crearPartido(1L, 100);
-    Entrada entrada = crearEntrada(1L, usuario, partido, "PAGADA", 2);
+    Entrada entrada = crearEntrada(1L, usuario, partido, "PAGADA", 4);
     Entrada transferida = crearEntrada(2L, usuario, partido, "TRANSFERIDA", 10);
 
     TransferenciaRequestDTO dto = new TransferenciaRequestDTO();
@@ -386,6 +387,7 @@ void transferirEntrada_superaLimiteDiario_lanzaExcepcion() {
     when(entradaRepository.findById(1L)).thenReturn(Optional.of(entrada));
     when(entradaRepository.findByUsuarioIdAndFechaCompraBetween(eq(1L), any(), any()))
             .thenReturn(List.of(transferida));
+    when(entradaRepository.save(any())).thenReturn(entrada);
 
     assertThrows(LimiteSuperadoException.class,
             () -> service.transferirEntrada(1L, dto, "user@test.com"));
