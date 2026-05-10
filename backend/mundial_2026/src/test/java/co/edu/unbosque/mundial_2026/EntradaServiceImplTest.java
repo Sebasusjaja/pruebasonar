@@ -371,6 +371,7 @@ void reembolsarEntrada_entradaNoExiste_lanzaExcepcion() {
             () -> service.reembolsarEntrada("user@test.com", 99L));
 }
 
+
 @Test
 void transferirEntrada_superaLimiteDiario_lanzaExcepcion() {
     Usuario usuario = crearUsuario(1L, "user@test.com");
