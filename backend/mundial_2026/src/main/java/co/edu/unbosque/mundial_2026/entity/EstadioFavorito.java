@@ -26,6 +26,7 @@ public class EstadioFavorito {
     private List<Usuario> usuarios;
 
     public EstadioFavorito() {
+        //Constructor vacio
     }
 
     public Long getId() {

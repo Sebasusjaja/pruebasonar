@@ -1,6 +1,5 @@
 package co.edu.unbosque.mundial_2026;
 
-
 import java.util.logging.Logger;
 
 import org.springframework.boot.CommandLineRunner;
@@ -24,18 +23,16 @@ public class AppConfig {
 
     private static final Logger logger = Logger.getLogger(AppConfig.class.getName());
 
-    public AppConfig() {}
-
     @Bean
     @Order(0)
     public CommandLineRunner cargarRoles(RolRepository rolRepository) {
         return args -> {
             String[] roles = {
-                "ROLE_USUARIO",
-                "ROLE_ADMIN",
-                "ROLE_OPERADOR",
-                "ROLE_SOPORTE",
-                "ROLE_LEGAL"
+                    "ROLE_USUARIO",
+                    "ROLE_ADMIN",
+                    "ROLE_OPERADOR",
+                    "ROLE_SOPORTE",
+                    "ROLE_LEGAL"
             };
             for (int i = 0; i < roles.length; i++) {
                 if (rolRepository.findByNombre(roles[i]).isEmpty()) {
@@ -61,19 +58,18 @@ public class AppConfig {
     }
 
     @Bean
-@Order(2)
-public CommandLineRunner cargarSelecciones(
-        SeleccionRepository seleccionRepository,
-        PartidoService partidoService) {
-    return args -> {
-        if (seleccionRepository.count() == 0) {
-            final var equipos = partidoService.obtenerSelecciones();
-            int total = 0;
+    @Order(2)
+    public CommandLineRunner cargarSelecciones(
+            SeleccionRepository seleccionRepository,
+            PartidoService partidoService) {
+        return args -> {
+            if (seleccionRepository.count() == 0) {
+                final var equipos = partidoService.obtenerSelecciones();
+                int total = 0;
 
-            for (int i = 0; i < equipos.size(); i++) {
-                final var equipo = equipos.get(i).getSeleccion();
-                if (equipo != null && equipo.getId() != null) {
-                    if (!seleccionRepository.existsById(equipo.getId())) {
+                for (int i = 0; i < equipos.size(); i++) {
+                    final var equipo = equipos.get(i).getSeleccion();
+                    if (equipo != null && equipo.getId() != null && !seleccionRepository.existsById(equipo.getId())) {
                         Seleccion s = new Seleccion();
                         s.setId(equipo.getId());
                         s.setNombre(equipo.getNombre());
@@ -81,64 +77,71 @@ public CommandLineRunner cargarSelecciones(
                         total++;
                     }
                 }
+                logger.info("Selecciones cargadas: " + total);
             }
-            logger.info("Selecciones cargadas: " + total);
-        }
-    };
-}
+        };
+    }
 
-   @Bean
-@Order(3)
-public CommandLineRunner cargarCiudadesYEstadios(
-        CiudadRepository ciudadRepository,
-        EstadioRepository estadioRepository) {
-    return args -> {
-        if (ciudadRepository.count() == 0) {
+    @Bean
+    @Order(3)
+    public CommandLineRunner cargarCiudadesYEstadios(
+            CiudadRepository ciudadRepository,
+            EstadioRepository estadioRepository) {
+        return args -> {
+            if (ciudadRepository.count() == 0) {
 
-            java.util.Map<String, String> estadioCiudad = new java.util.LinkedHashMap<>();
-            estadioCiudad.put("Estadio Azteca", "Ciudad de Mexico");
-            estadioCiudad.put("Estadio Akron", "Guadalajara");
-            estadioCiudad.put("Estadio BBVA", "Monterrey");
-            estadioCiudad.put("BMO Field", "Toronto");
-            estadioCiudad.put("BC Place", "Vancouver");
-            estadioCiudad.put("SoFi Stadium", "Los Angeles");
-            estadioCiudad.put("MetLife Stadium", "East Rutherford");
-            estadioCiudad.put("Gillette Stadium", "Boston");
-            estadioCiudad.put("NRG Stadium", "Houston");
-            estadioCiudad.put("Lincoln Financial Field", "Philadelphia");
-            estadioCiudad.put("Mercedes-Benz Stadium", "Atlanta");
-            estadioCiudad.put("Lumen Field", "Seattle");
-            estadioCiudad.put("Hard Rock Stadium", "Miami");
-            estadioCiudad.put("Arrowhead Stadium", "Kansas City");
+                java.util.Map<String, String> estadioCiudad = new java.util.LinkedHashMap<>();
+                estadioCiudad.put("Estadio Azteca", "Ciudad de Mexico");
+                estadioCiudad.put("Estadio Akron", "Guadalajara");
+                estadioCiudad.put("Estadio BBVA", "Monterrey");
+                estadioCiudad.put("BMO Field", "Toronto");
+                estadioCiudad.put("BC Place", "Vancouver");
+                estadioCiudad.put("SoFi Stadium", "Los Angeles");
+                estadioCiudad.put("MetLife Stadium", "East Rutherford");
+                estadioCiudad.put("Gillette Stadium", "Boston");
+                estadioCiudad.put("NRG Stadium", "Houston");
+                estadioCiudad.put("Lincoln Financial Field", "Philadelphia");
+                estadioCiudad.put("Mercedes-Benz Stadium", "Atlanta");
+                estadioCiudad.put("Lumen Field", "Seattle");
+                estadioCiudad.put("Hard Rock Stadium", "Miami");
+                estadioCiudad.put("Arrowhead Stadium", "Kansas City");
 
-            java.util.Map<String, CiudadFavorita> ciudadesGuardadas = new java.util.HashMap<>();
-            long ciudadId = 1;
-            long estadioId = 1;
+                java.util.Map<String, CiudadFavorita> ciudadesGuardadas = new java.util.HashMap<>();
+                long ciudadId = 1;
+                long estadioId = 1;
 
-            for (java.util.Map.Entry<String, String> entry : estadioCiudad.entrySet()) {
-                final String nombreEstadio = entry.getKey();
-                final String nombreCiudad = entry.getValue();
+                for (java.util.Map.Entry<String, String> entry : estadioCiudad.entrySet()) {
+                    final String nombreEstadio = entry.getKey();
+                    final String nombreCiudad = entry.getValue();
 
-                CiudadFavorita ciudad = ciudadesGuardadas.get(nombreCiudad);
-                if (ciudad == null) {
-                    ciudad = new CiudadFavorita();
-                    ciudad.setId(ciudadId++);
-                    ciudad.setNombre(nombreCiudad);
-                    ciudad.setPais("USA/CAN/MEX");
-                    ciudadRepository.save(ciudad);
-                    ciudadesGuardadas.put(nombreCiudad, ciudad);
+                    CiudadFavorita ciudad = ciudadesGuardadas.get(nombreCiudad);
+                    if (ciudad == null) {
+                        ciudad = new CiudadFavorita();
+                        ciudad.setId(ciudadId++);
+                        ciudad.setNombre(nombreCiudad);
+                        ciudad.setPais("USA/CAN/MEX");
+                        ciudadRepository.save(ciudad);
+                        ciudadesGuardadas.put(nombreCiudad, ciudad);
+                    }
+
+                    EstadioFavorito estadio = new EstadioFavorito();
+                    estadio.setId(estadioId++);
+                    estadio.setNombre(nombreEstadio);
+                    estadio.setCiudad(ciudad);
+                    estadioRepository.save(estadio);
                 }
 
-                EstadioFavorito estadio = new EstadioFavorito();
-                estadio.setId(estadioId++);
-                estadio.setNombre(nombreEstadio);
-                estadio.setCiudad(ciudad);
-                estadioRepository.save(estadio);
+                logger.info("Ciudades cargadas: " + ciudadesGuardadas.size());
+                logger.info("Estadios cargados: " + estadioCiudad.size());
             }
+        };
+    }
 
-            logger.info("Ciudades cargadas: " + ciudadesGuardadas.size());
-            logger.info("Estadios cargados: " + estadioCiudad.size());
-        }
-    };
-}
+    @Bean
+    public com.fasterxml.jackson.databind.ObjectMapper objectMapper() {
+        com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+        mapper.disable(com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        mapper.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
+        return mapper;
+    }
 }

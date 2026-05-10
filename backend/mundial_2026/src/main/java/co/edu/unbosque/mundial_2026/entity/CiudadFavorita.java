@@ -22,6 +22,7 @@ public class CiudadFavorita {
     private List<Usuario> usuarios;
 
     public CiudadFavorita() {
+        //Constructor vacio
     }
 
     public Long getId() {

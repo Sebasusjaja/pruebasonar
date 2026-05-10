@@ -9,10 +9,12 @@ export function getAuthToken(): string | null {
 }
 
 export function setAuthToken(token: string | null) {
-  if (!token) localStorage.removeItem(TOKEN_KEY);
-  else localStorage.setItem(TOKEN_KEY, token);
+  if (token) {
+    localStorage.setItem(TOKEN_KEY, token);
+  } else {
+    localStorage.removeItem(TOKEN_KEY);
+  }
 }
-
 async function request<T>(path: string, method: HttpMethod, body?: unknown): Promise<T> {
   const token = getAuthToken();
 

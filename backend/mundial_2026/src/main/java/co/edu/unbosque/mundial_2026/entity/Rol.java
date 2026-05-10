@@ -19,6 +19,7 @@ public class Rol {
     private String nombre;
 
     public Rol() {
+        //Constructor vacio
     }
 
     public Long getId() {

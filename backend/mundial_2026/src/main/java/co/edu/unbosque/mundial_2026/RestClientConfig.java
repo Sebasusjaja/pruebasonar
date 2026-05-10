@@ -14,7 +14,7 @@ public class RestClientConfig {
     @Value("${api.football.key}")
     private String apiFootballKey;
 
-    public RestClientConfig() {}
+  
 //Inicializa el restcliente con la url base y el header que proporciona Api-Fotball
     @Bean
     public RestClient footballClient() {

@@ -14,7 +14,7 @@ export const stadiumsMock: Stadium[] = [
   { id: "lincoln", name: "Lincoln Financial Field", city: "Philadelphia", country: "Estados Unidos", lat: 39.9008, lng: -75.1675 },
   { id: "mercedesbenz", name: "Mercedes-Benz Stadium", city: "Atlanta", country: "Estados Unidos", lat: 33.7553, lng: -84.4006 },
   { id: "lumen", name: "Lumen Field", city: "Seattle", country: "Estados Unidos", lat: 47.5952, lng: -122.3316 },
-  { id: "hardrock", name: "Hard Rock Stadium", city: "Miami", country: "Estados Unidos", lat: 25.9580, lng: -80.2389 },
+  { id: "hardrock", name: "Hard Rock Stadium", city: "Miami", country: "Estados Unidos", lat: 25.958, lng: -80.2389 },
   { id: "arrowhead", name: "Arrowhead Stadium", city: "Kansas City", country: "Estados Unidos", lat: 39.0489, lng: -94.4839 },
 ];
 
