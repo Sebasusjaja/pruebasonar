@@ -342,4 +342,19 @@ void confirmarOrden_stockInsuficiente_lanzaExcepcion() {
     assertThrows(co.edu.unbosque.mundial_2026.exception.StockInsuficienteException.class,
             () -> service.confirmarOrden("user@test.com", dto));
 }
+@Test
+void agregarItem_productoInactivo_lanzaExcepcion() {
+    Usuario usuario = crearUsuario(1L);
+    Producto producto = crearProducto(1L, 10, false);
+
+    AgregarItemDTO dto = new AgregarItemDTO();
+    dto.setProductoId(1L);
+    dto.setCantidad(2);
+
+    when(usuarioService.obtenerEntidadPorCorreo("user@test.com")).thenReturn(usuario);
+    when(productoService.obtenerEntidadPorId(1L)).thenReturn(producto);
+
+    assertThrows(co.edu.unbosque.mundial_2026.exception.ProductoNotFoundException.class,
+            () -> service.agregarItem("user@test.com", dto));
+}
 }
