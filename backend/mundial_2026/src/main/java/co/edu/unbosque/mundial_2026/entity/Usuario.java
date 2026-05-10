@@ -50,22 +50,30 @@ public class Usuario {
     private Rol rol;
 
     @ManyToMany
-    @JoinTable(name = "usuarios_selecciones", joinColumns = @JoinColumn(name = USUARIO_ID), inverseJoinColumns = @JoinColumn(name = "seleccion_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
-            USUARIO_ID, "seleccion_id" }))
+    @JoinTable(name = "usuarios_selecciones",
+            joinColumns = @JoinColumn(name = USUARIO_ID),
+            inverseJoinColumns = @JoinColumn(name = "seleccion_id"),
+            uniqueConstraints = @UniqueConstraint(columnNames = { USUARIO_ID, "seleccion_id" }))
     private List<Seleccion> seleccionesU;
 
     @ManyToMany
-    @JoinTable(name = "usuarios_preferenciasUbi", joinColumns = @JoinColumn(name = USUARIO_ID), inverseJoinColumns = @JoinColumn(name = "estadio_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
-            USUARIO_ID, "estadio_id" }))
+    @JoinTable(name = "usuarios_preferenciasUbi",
+            joinColumns = @JoinColumn(name = USUARIO_ID),
+            inverseJoinColumns = @JoinColumn(name = "estadio_id"),
+            uniqueConstraints = @UniqueConstraint(columnNames = { USUARIO_ID, "estadio_id" }))
     private List<EstadioFavorito> preferenciasu;
 
     @ManyToMany
-    @JoinTable(joinColumns = @JoinColumn(name = USUARIO_ID), inverseJoinColumns = @JoinColumn(name = "ciudad_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
-            USUARIO_ID, "ciudad_id" }))
+    @JoinTable(joinColumns = @JoinColumn(name = USUARIO_ID),
+            inverseJoinColumns = @JoinColumn(name = "ciudad_id"),
+            uniqueConstraints = @UniqueConstraint(columnNames = { USUARIO_ID, "ciudad_id" }))
     private List<CiudadFavorita> ciudadFavoritas;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private boolean activo;
+
+    @Column(name = "fcm_token")
+    private String fcmtoken;
 
     public Usuario() {
     }
@@ -158,5 +166,13 @@ public class Usuario {
 
     public void setCiudadFavoritas(List<CiudadFavorita> ciudadFavoritas) {
         this.ciudadFavoritas = ciudadFavoritas;
+    }
+
+    public String getFcmtoken() {
+        return fcmtoken;
+    }
+
+    public void setFcmtoken(String fcmtoken) {
+        this.fcmtoken = fcmtoken;
     }
 }

@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +35,7 @@ public class UsuarioRestController {
 
     private final UsuarioService service;
     private final TokenBlacklist tokenBlacklist;
+    private static final String KEY_USUARIO = "usuario";
 
     public UsuarioRestController(final UsuarioService service,
             final TokenBlacklist tokenBlacklist) {
@@ -42,11 +44,12 @@ public class UsuarioRestController {
     }
 
 
-    @GetMapping("/usuarios/listar")
+    @PreAuthorize("hasRole('ADMIN')")
+@GetMapping("/usuarios/listar")
     public ResponseEntity<List<UsuarioResponseDTO>> listarTodos() {
         return ResponseEntity.ok(service.listarTodos());
     }
-
+@PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/usuarios/{idUsuario}")
     public ResponseEntity<UsuarioResponseDTO> obtenerUsuario(@PathVariable final Long idUsuario) {
         return ResponseEntity.ok(service.obtenerUsuario(idUsuario));
@@ -63,7 +66,7 @@ public class UsuarioRestController {
             @Valid @RequestBody final UsuarioRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.registrarUsuario(dto));
     }
-
+@PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/usuarios/{idUsuario}")
     public ResponseEntity<Void> eliminarUsuario(@PathVariable final Long idUsuario) {
         service.eliminarUsuario(idUsuario);
@@ -83,11 +86,11 @@ public class UsuarioRestController {
                 tokenBlacklist.agregar(header.replace(PREFIX_TOKEN, ""));
             }
             final Map<String, Object> response = new HashMap<>();
-            response.put("usuario", resultado.get("usuario"));
+            response.put(KEY_USUARIO, resultado.get(KEY_USUARIO));
             response.put("mensaje", "Correo actualizado, inicia sesión nuevamente");
             return ResponseEntity.ok(response);
         }
-        return ResponseEntity.ok(resultado.get("usuario"));
+        return ResponseEntity.ok(resultado.get(KEY_USUARIO));
     }
 //Cuando cierra sesion añade el token a la lista negra para que nadie mas lo pueda usar
     @PostMapping("/auth/logout")
@@ -174,4 +177,10 @@ public class UsuarioRestController {
     public ResponseEntity<List<PreferenciaDTO>> listarCiudades() {
         return ResponseEntity.ok(service.listarCiudades());
     }
+    @PutMapping("/usuarios/fcm-token")
+public ResponseEntity<Void> actualizarFcmToken(@RequestBody Map<String, String> body) {
+    String correo = SecurityContextHolder.getContext().getAuthentication().getName();
+    service.actualizarFcmToken(correo, body.get("fcmToken"));
+    return ResponseEntity.noContent().build();
+}
 }

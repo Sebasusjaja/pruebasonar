@@ -3,6 +3,7 @@ package co.edu.unbosque.mundial_2026;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.verify;
@@ -21,7 +22,8 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClient.RequestHeadersUriSpec;
 import org.springframework.web.client.RestClient.RequestHeadersSpec;
 import org.springframework.web.client.RestClient.ResponseSpec;
-
+import co.edu.unbosque.mundial_2026.service.UsuarioService;
+import co.edu.unbosque.mundial_2026.dto.PartidoCapacidadDTO;
 import co.edu.unbosque.mundial_2026.dto.response.EquipoConEstadioDTO;
 import co.edu.unbosque.mundial_2026.dto.response.EquipoDTO;
 import co.edu.unbosque.mundial_2026.dto.response.EstadioDTO;
@@ -47,7 +49,7 @@ import co.edu.unbosque.mundial_2026.repository.UsuarioRepository;
 import co.edu.unbosque.mundial_2026.service.PartidoServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
-public class PartidoServiceImplTest {
+class PartidoServiceImplTest {
 
     @Mock
     private RestClient footballClient;
@@ -67,7 +69,8 @@ public class PartidoServiceImplTest {
     private EstadioRepository estadioRepository;
     @Mock
     private CiudadRepository ciudadRepository;
-
+@Mock
+private UsuarioService usuarioService;
     @InjectMocks
     private PartidoServiceImpl service;
 
@@ -264,7 +267,7 @@ public class PartidoServiceImplTest {
         PartidoResponseDTO response = new PartidoResponseDTO();
         response.setPartidos(List.of(crearPartidoDTO()));
 
-        when(usuarioRepository.findByCorreoUsuario("seb@test.com")).thenReturn(Optional.of(usuario));
+      when(usuarioService.obtenerEntidadPorCorreo("seb@test.com")).thenReturn(usuario);
         mockRestClient(response);
 
         List<PartidoDTO> resultado = service.obtenerPartidosPorSeleccionesFav("seb@test.com");
@@ -275,69 +278,69 @@ public class PartidoServiceImplTest {
 
     @Test
     void obtenerPartidosPorSeleccionesFav_usuarioNoExistente_lanzaExcepcion() {
-        when(usuarioRepository.findByCorreoUsuario("noexiste@test.com")).thenReturn(Optional.empty());
+      when(usuarioService.obtenerEntidadPorCorreo("noexiste@test.com")).thenThrow(new UsuarioNotFoundException("no existe"));
 
         assertThrows(UsuarioNotFoundException.class,
                 () -> service.obtenerPartidosPorSeleccionesFav("noexiste@test.com"));
     }
 
+  @Test
+void obtenerPartidosPorEstadiosFav_usuarioExistente_retornaLista() {
+    EstadioFavorito estadio = new EstadioFavorito();
+    estadio.setId(1L);
+    estadio.setNombre("MetLife Stadium");
+
+    Usuario usuario = crearUsuario("seb@test.com");
+    usuario.setPreferenciasu(List.of(estadio));
+
+    PartidoResponseDTO response = new PartidoResponseDTO();
+    response.setPartidos(List.of(crearPartidoDTO()));
+
+    when(usuarioService.obtenerEntidadPorCorreo("seb@test.com")).thenReturn(usuario);
+    mockRestClient(response);
+
+    List<PartidoDTO> resultado = service.obtenerPartidosPorEstadiosFav("seb@test.com");
+
+    assertNotNull(resultado);
+    assertEquals(1, resultado.size());
+}
+
+   @Test
+void obtenerPartidosPorEstadiosFav_usuarioNoExistente_lanzaExcepcion() {
+    when(usuarioService.obtenerEntidadPorCorreo("noexiste@test.com")).thenThrow(new UsuarioNotFoundException("no existe"));
+
+    assertThrows(UsuarioNotFoundException.class,
+            () -> service.obtenerPartidosPorEstadiosFav("noexiste@test.com"));
+}
+
+ @Test
+void obtenerPartidosPorCiudadesFav_usuarioExistente_retornaLista() {
+    CiudadFavorita ciudad = new CiudadFavorita();
+    ciudad.setId(1L);
+    ciudad.setNombre("East Rutherford");
+
+    Usuario usuario = crearUsuario("seb@test.com");
+    usuario.setCiudadFavoritas(List.of(ciudad));
+
+    PartidoResponseDTO response = new PartidoResponseDTO();
+    response.setPartidos(List.of(crearPartidoDTO()));
+
+    when(usuarioService.obtenerEntidadPorCorreo("seb@test.com")).thenReturn(usuario);
+    mockRestClient(response);
+
+    List<PartidoDTO> resultado = service.obtenerPartidosPorCiudadesFav("seb@test.com");
+
+    assertNotNull(resultado);
+    assertEquals(1, resultado.size());
+}
+
     @Test
-    void obtenerPartidosPorEstadiosFav_usuarioExistente_retornaLista() {
-        EstadioFavorito estadio = new EstadioFavorito();
-        estadio.setId(1L);
-        estadio.setNombre("MetLife Stadium");
+void obtenerPartidosPorCiudadesFav_usuarioNoExistente_lanzaExcepcion() {
+    when(usuarioService.obtenerEntidadPorCorreo("noexiste@test.com")).thenThrow(new UsuarioNotFoundException("no existe"));
 
-        Usuario usuario = crearUsuario("seb@test.com");
-        usuario.setPreferenciasu(List.of(estadio));
-
-        PartidoResponseDTO response = new PartidoResponseDTO();
-        response.setPartidos(List.of(crearPartidoDTO()));
-
-        when(usuarioRepository.findByCorreoUsuario("seb@test.com")).thenReturn(Optional.of(usuario));
-        mockRestClient(response);
-
-        List<PartidoDTO> resultado = service.obtenerPartidosPorEstadiosFav("seb@test.com");
-
-        assertNotNull(resultado);
-        assertEquals(1, resultado.size());
-    }
-
-    @Test
-    void obtenerPartidosPorEstadiosFav_usuarioNoExistente_lanzaExcepcion() {
-        when(usuarioRepository.findByCorreoUsuario("noexiste@test.com")).thenReturn(Optional.empty());
-
-        assertThrows(UsuarioNotFoundException.class,
-                () -> service.obtenerPartidosPorEstadiosFav("noexiste@test.com"));
-    }
-
-    @Test
-    void obtenerPartidosPorCiudadesFav_usuarioExistente_retornaLista() {
-        CiudadFavorita ciudad = new CiudadFavorita();
-        ciudad.setId(1L);
-        ciudad.setNombre("East Rutherford");
-
-        Usuario usuario = crearUsuario("seb@test.com");
-        usuario.setCiudadFavoritas(List.of(ciudad));
-
-        PartidoResponseDTO response = new PartidoResponseDTO();
-        response.setPartidos(List.of(crearPartidoDTO()));
-
-        when(usuarioRepository.findByCorreoUsuario("seb@test.com")).thenReturn(Optional.of(usuario));
-        mockRestClient(response);
-
-        List<PartidoDTO> resultado = service.obtenerPartidosPorCiudadesFav("seb@test.com");
-
-        assertNotNull(resultado);
-        assertEquals(1, resultado.size());
-    }
-
-    @Test
-    void obtenerPartidosPorCiudadesFav_usuarioNoExistente_lanzaExcepcion() {
-        when(usuarioRepository.findByCorreoUsuario("noexiste@test.com")).thenReturn(Optional.empty());
-
-        assertThrows(UsuarioNotFoundException.class,
-                () -> service.obtenerPartidosPorCiudadesFav("noexiste@test.com"));
-    }
+    assertThrows(UsuarioNotFoundException.class,
+            () -> service.obtenerPartidosPorCiudadesFav("noexiste@test.com"));
+}
 
     @Test
     void filtrarPorSeleccion_retornaLista() {
@@ -408,4 +411,126 @@ public class PartidoServiceImplTest {
         assertEquals("Colombia", resultado.get(0).getNombre());
         verify(seleccionRepository).findAll();
     }
+    @Test
+void actualizarCapacidad_partidoExistente_actualizaCorrectamente() {
+    Partido partido = new Partido();
+    partido.setId(1L);
+    partido.setCapacidadDisponible(100);
+
+    when(partidoRepository.findById(1L)).thenReturn(Optional.of(partido));
+    when(partidoRepository.save(any(Partido.class))).thenReturn(partido);
+
+    service.actualizarCapacidad(1L, -10);
+
+    assertEquals(90, partido.getCapacidadDisponible());
+    verify(partidoRepository).save(partido);
+}
+
+@Test
+void actualizarCapacidad_partidoNoExistente_lanzaExcepcion() {
+    when(partidoRepository.findById(99L)).thenReturn(Optional.empty());
+
+    assertThrows(PartidoNotFoundException.class,
+            () -> service.actualizarCapacidad(99L, -10));
+}
+
+@Test
+void obtenerPartidoEntidadPorId_existente_retornaEntidad() {
+    Partido partido = new Partido();
+    partido.setId(1L);
+
+    when(partidoRepository.findById(1L)).thenReturn(Optional.of(partido));
+
+    Partido resultado = service.obtenerPartidoEntidadPorId(1L);
+
+    assertNotNull(resultado);
+    assertEquals(1L, resultado.getId());
+}
+
+@Test
+void obtenerPartidoEntidadPorId_noExistente_lanzaExcepcion() {
+    when(partidoRepository.findById(99L)).thenReturn(Optional.empty());
+
+    assertThrows(PartidoNotFoundException.class,
+            () -> service.obtenerPartidoEntidadPorId(99L));
+}
+
+@Test
+void listarPartidosConCapacidad_conPartidos_retornaLista() {
+    Partido partido = new Partido();
+    partido.setId(1L);
+    partido.setSeleccionLocal("Colombia");
+    partido.setSeleccionVisitante("Brazil");
+    partido.setEstadio("MetLife Stadium");
+    partido.setCapacidadDisponible(60000);
+
+    when(partidoRepository.findAll()).thenReturn(List.of(partido));
+
+    List<PartidoCapacidadDTO> resultado = service.listarPartidosConCapacidad();
+
+    assertNotNull(resultado);
+    assertEquals(1, resultado.size());
+    assertEquals("East Rutherford", resultado.get(0).getCiudad());
+}
+
+@Test
+void listarPartidosConCapacidad_sinPartidos_retornaVacio() {
+    when(partidoRepository.findAll()).thenReturn(List.of());
+
+    List<PartidoCapacidadDTO> resultado = service.listarPartidosConCapacidad();
+
+    assertNotNull(resultado);
+    assertTrue(resultado.isEmpty());
+}
+
+@Test
+void listarDesdeBD_retornaLista() {
+    Partido partido = new Partido();
+    partido.setId(1L);
+
+    when(partidoRepository.findAll()).thenReturn(List.of(partido));
+
+    List<Partido> resultado = service.listarDesdeBD();
+
+    assertNotNull(resultado);
+    assertEquals(1, resultado.size());
+}
+@Test
+void sincronizarPorFechaYLiga_conPartidos_guardaYRetornaConteo() {
+    PartidoResponseDTO response = new PartidoResponseDTO();
+    response.setPartidos(List.of(crearPartidoDTO()));
+    mockRestClient(response);
+
+    when(partidoRepository.findById(any())).thenReturn(Optional.empty());
+    when(partidoRepository.saveAll(anyList())).thenReturn(List.of(new Partido()));
+
+    int resultado = service.sincronizarPorFechaYLiga("2026-06-11", 1, 2026);
+
+    assertEquals(1, resultado);
+    verify(partidoRepository).saveAll(anyList());
+}
+
+@Test
+void sincronizarPorFechaYLiga_respuestaVacia_retornaCero() {
+    PartidoResponseDTO response = new PartidoResponseDTO();
+    response.setPartidos(List.of());
+    mockRestClient(response);
+
+    int resultado = service.sincronizarPorFechaYLiga("2026-06-11", 1, 2026);
+
+    assertEquals(0, resultado);
+}
+
+@Test
+void obtenerSelecciones_retornaLista() {
+    co.edu.unbosque.mundial_2026.dto.response.EquipoMundialResponseDTO response =
+        new co.edu.unbosque.mundial_2026.dto.response.EquipoMundialResponseDTO();
+    response.setEquipos(List.of());
+    mockRestClient(response);
+
+    List<co.edu.unbosque.mundial_2026.dto.response.EquipoMundialDTO> resultado = 
+        service.obtenerSelecciones();
+
+    assertNotNull(resultado);
+}
 }

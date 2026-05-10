@@ -19,10 +19,10 @@ public class UsuarioRequestDTO {
 
     @NotBlank(message = "La contraseña es obligatoria")
     @Size(min = 8, message = "La contraseña debe tener mínimo 8 caracteres")
-    @Pattern(regexp = ".*[A-Z].*", message = "La contraseña debe tener al menos una letra mayúscula")
-    @Pattern(regexp = ".*[a-z].*", message = "La contraseña debe tener al menos una letra minúscula")
-    @Pattern(regexp = ".*[0-9].*", message = "La contraseña debe tener al menos un número")
-    @Pattern(regexp = ".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?].*", message = "La contraseña debe tener al menos un símbolo")
+    @Pattern(regexp = "^(?=.*[A-Z]).+$", message = "La contraseña debe tener al menos una letra mayúscula")
+@Pattern(regexp = "^(?=.*[a-z]).+$", message = "La contraseña debe tener al menos una letra minúscula")
+@Pattern(regexp = "^(?=.*\\d).+$", message = "La contraseña debe tener al menos un número")
+@Pattern(regexp = "^(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).+$", message = "La contraseña debe tener al menos un símbolo")
     private String contrasena;
 
     private String rol;
