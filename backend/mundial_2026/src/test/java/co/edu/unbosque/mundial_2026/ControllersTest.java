@@ -179,4 +179,115 @@ class ControllersTest {
         ResponseEntity<?> res = usuarioController.listarCiudades();
         assertEquals(200, res.getStatusCode().value());
     }
+    @Test
+void partido_listar_retornaOk() {
+    when(partidoService.obtenerPartidos()).thenReturn(List.of());
+    ResponseEntity<?> res = partidoController.listarPartidos();
+    assertEquals(200, res.getStatusCode().value());
+}
+
+@Test
+void partido_obtenerPorEquipo_retornaOk() {
+    when(partidoService.obtenerPartidosPorEquipo(1L)).thenReturn(List.of());
+    ResponseEntity<?> res = partidoController.obtenerPartidosPorEquipo(1L);
+    assertEquals(200, res.getStatusCode().value());
+}
+
+@Test
+void partido_obtenerStandings_retornaOk() {
+    when(partidoService.obtenerStandings()).thenReturn(List.of());
+    ResponseEntity<?> res = partidoController.obtenerStandings();
+    assertEquals(200, res.getStatusCode().value());
+}
+
+@Test
+void partido_obtenerSelecciones_retornaOk() {
+    when(partidoService.obtenerSelecciones()).thenReturn(List.of());
+    ResponseEntity<?> res = partidoController.obtenerSelecciones();
+    assertEquals(200, res.getStatusCode().value());
+}
+
+@Test
+void partido_obtenerJugadoresPorEquipo_retornaOk() {
+    when(partidoService.obtenerJugadoresPorEquipo(1L)).thenReturn(List.of());
+    ResponseEntity<?> res = partidoController.obtenerJugadoresPorEquipo(1L);
+    assertEquals(200, res.getStatusCode().value());
+}
+
+@Test
+void partido_obtenerPorFecha_retornaOk() {
+    when(partidoService.obtenerPartidosPorFecha("2026-06-01")).thenReturn(List.of());
+    ResponseEntity<?> res = partidoController.obtenerPartidosPorFecha("2026-06-01");
+    assertEquals(200, res.getStatusCode().value());
+}
+
+@Test
+void partido_obtenerEnVivo_retornaOk() {
+    when(partidoService.obtenerPartidosEnVivo()).thenReturn(List.of());
+    ResponseEntity<?> res = partidoController.obtenerPartidosEnVivo();
+    assertEquals(200, res.getStatusCode().value());
+}
+
+@Test
+void partido_sincronizar_retornaOk() {
+    when(partidoService.sincronizarPorFechaYLiga("2026-06-01", 1, 2026)).thenReturn(1);
+    ResponseEntity<?> res = partidoController.sincronizarPorFechaYLiga(1, 2026, "2026-06-01");
+    assertEquals(200, res.getStatusCode().value());
+}
+
+@Test
+void partido_actualizarResultado_retornaOk() {
+    when(partidoService.actualizarResultado(1L, 2, 1, 1)).thenReturn(1);
+    ResponseEntity<?> res = partidoController.actualizarResultado(1L, 2, 1, 1);
+    assertEquals(200, res.getStatusCode().value());
+}
+
+@Test
+void partido_obtenerPorId_retornaOk() {
+    when(partidoService.obtenerPartidoPorId(1L))
+        .thenReturn(new co.edu.unbosque.mundial_2026.dto.response.PartidoDTO());
+    ResponseEntity<?> res = partidoController.obtenerPorId(1L);
+    assertEquals(200, res.getStatusCode().value());
+}
+
+@Test
+void producto_crear_retornaCreated() {
+    co.edu.unbosque.mundial_2026.dto.request.ProductoRequestDTO dto =
+        new co.edu.unbosque.mundial_2026.dto.request.ProductoRequestDTO();
+    when(productoService.crear(dto))
+        .thenReturn(new co.edu.unbosque.mundial_2026.dto.response.ProductoResponseDTO());
+    ResponseEntity<?> res = productoController.crear(dto);
+    assertEquals(201, res.getStatusCode().value());
+}
+
+@Test
+void producto_actualizar_retornaOk() {
+    co.edu.unbosque.mundial_2026.dto.request.ProductoActualizarRequestDTO dto =
+        new co.edu.unbosque.mundial_2026.dto.request.ProductoActualizarRequestDTO();
+    when(productoService.actualizar(1L, dto))
+        .thenReturn(new co.edu.unbosque.mundial_2026.dto.response.ProductoResponseDTO());
+    ResponseEntity<?> res = productoController.actualizar(1L, dto);
+    assertEquals(200, res.getStatusCode().value());
+}
+
+@Test
+void producto_eliminar_retornaNoContent() {
+    doNothing().when(productoService).eliminar(1L);
+    ResponseEntity<?> res = productoController.eliminar(1L);
+    assertEquals(204, res.getStatusCode().value());
+}
+
+@Test
+void producto_reactivar_retornaNoContent() {
+    doNothing().when(productoService).reactivar(1L);
+    ResponseEntity<?> res = productoController.reactivar(1L);
+    assertEquals(204, res.getStatusCode().value());
+}
+
+@Test
+void producto_listarTodosAdmin_retornaOk() {
+    when(productoService.listarTodos(false)).thenReturn(List.of());
+    ResponseEntity<?> res = productoController.listarTodosAdmin();
+    assertEquals(200, res.getStatusCode().value());
+}
 }
