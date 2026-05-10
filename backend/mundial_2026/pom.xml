@@ -24,7 +24,8 @@
             **/Mundial2026Application.java,
             **/AppConfig.java,
             **/RestClientConfig.java,
-            **/FireBaseConfig.java
+            **/FireBaseConfig.java,
+            **/exception/ErrorHandlerException.java
         </sonar.exclusions>
         <sonar.coverage.exclusions>
             **/dto/**,
