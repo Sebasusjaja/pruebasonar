@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+# Configuración sensible
+backend/mundial_2026/src/main/resources/application.properties
+backend/mundial_2026/src/main/resources/firebase-service-account.json
