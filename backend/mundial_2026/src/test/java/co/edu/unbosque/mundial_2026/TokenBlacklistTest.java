@@ -14,7 +14,7 @@ import io.jsonwebtoken.Jwts;
 import java.time.Instant;
 import java.util.Date;
 
-public class TokenBlacklistTest {
+ class TokenBlacklistTest {
 
     private TokenBlacklist tokenBlacklist;
     private String tokenValido;
