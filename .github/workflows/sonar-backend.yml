@@ -33,7 +33,7 @@ jobs:
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Sebasusjaja_pruebasonar -Dsonar.organization=sebasusjaja -f backend/mundial_2026/pom.xml
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Sebasusjaja_pruebasonar-backend -Dsonar.organization=sebasusjaja -f backend/mundial_2026/pom.xml
 
   frontend:
     name: Analyze Frontend
