@@ -28,7 +28,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import static co.edu.unbosque.mundial_2026.security.TokenJwt.CONTENT_TYPE;
 import static co.edu.unbosque.mundial_2026.security.TokenJwt.HEADER_AUTHORIZATION;
 import static co.edu.unbosque.mundial_2026.security.TokenJwt.PREFIX_TOKEN;
 
