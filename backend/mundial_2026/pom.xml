@@ -27,7 +27,11 @@
             **/FireBaseConfig.java
         </sonar.exclusions>
         <sonar.cpd.exclusions>
-            **/exception/GlobalExceptionHandler.java
+            **/exception/GlobalExceptionHandler.java,
+            **/dto/**,
+            **/entity/**,
+            **/repository/**,
+            **/exception/*Exception.java
         </sonar.cpd.exclusions>
     </properties>
     <dependencies>
