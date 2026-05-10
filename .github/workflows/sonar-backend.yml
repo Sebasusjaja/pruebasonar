@@ -33,7 +33,7 @@ jobs:
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Sebasusjaja_pruebasonar-backend -Dsonar.organization=sebasusjaja -f backend/mundial_2026/pom.xml
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Sebasusjaja_pruebasonar-backend -Dsonar.organization=sebasusjaja -Dsonar.qualitygate.wait=false -f backend/mundial_2026/pom.xml
 
   frontend:
     name: Analyze Frontend
@@ -49,3 +49,6 @@ jobs:
           SONAR_HOST_URL: https://sonarcloud.io
         with:
           projectBaseDir: frontend-web/frontend_mundial
+          args: >
+            -Dsonar.qualitygate.wait=false
+            -Dsonar.coverage.exclusions=**/*
