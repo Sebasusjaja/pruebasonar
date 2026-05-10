@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import co.edu.unbosque.mundial_2026.exception.*;
 
@@ -172,4 +173,51 @@ void pronosticoNotFoundException_tienemensaje() {
     PronosticoNotFoundException e = new PronosticoNotFoundException("no existe");
     assertEquals("no existe", e.getMessage());
 }
+@Test
+void handleApuestaNotFound_retorna404() {
+    ResponseEntity<?> res = handler.handleApuestaNotFound(new ApuestaNotFoundException("no existe"));
+    assertEquals(HttpStatus.NOT_FOUND, res.getStatusCode());
+}
+
+@Test
+void handlePronosticoNotFound_retorna404() {
+    ResponseEntity<?> res = handler.handlePronosticoNotFound(new PronosticoNotFoundException("no existe"));
+    assertEquals(HttpStatus.NOT_FOUND, res.getStatusCode());
+}
+
+@Test
+void handleCodigoInvalido_retorna400() {
+    ResponseEntity<?> res = handler.handleCodigoInvalido(new CodigoInvalidoException("invalido"));
+    assertEquals(HttpStatus.BAD_REQUEST, res.getStatusCode());
+}
+
+@Test
+void handleParticipacionNotFound_retorna404() {
+    ResponseEntity<?> res = handler.handleParticipacionNotFound(new ParticipacionNotFoundException("no existe"));
+    assertEquals(HttpStatus.NOT_FOUND, res.getStatusCode());
+}
+
+@Test
+void handleUsuarioYaEnApuesta_retorna409() {
+    ResponseEntity<?> res = handler.handleUsuarioYaEnApuesta(new UsuarioYaEnApuestaException("ya existe"));
+    assertEquals(HttpStatus.CONFLICT, res.getStatusCode());
+}
+
+@Test
+void handleApuestaCerrada_retorna400() {
+    ResponseEntity<?> res = handler.handleApuestaCerrada(new ApuestaCerradaException("cerrada"));
+    assertEquals(HttpStatus.BAD_REQUEST, res.getStatusCode());
+}
+
+@Test
+void handleValidation_retorna400() {
+    org.springframework.validation.BeanPropertyBindingResult bindingResult =
+        new org.springframework.validation.BeanPropertyBindingResult(new Object(), "test");
+    bindingResult.addError(new org.springframework.validation.FieldError("test", "campo", "requerido"));
+    MethodArgumentNotValidException ex = new MethodArgumentNotValidException(null, bindingResult);
+    ResponseEntity<?> res = handler.handleValidation(ex);
+    assertEquals(HttpStatus.BAD_REQUEST, res.getStatusCode());
+}
+
+
 }
