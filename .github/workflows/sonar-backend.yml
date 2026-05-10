@@ -5,10 +5,9 @@ on:
       - main
   pull_request:
     types: [opened, synchronize, reopened]
-
 jobs:
   build:
-    name: Build and analyze Backend
+    name: Build and analyze
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -34,7 +33,7 @@ jobs:
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Sebasusjaja_pruebasonar-backend -Dsonar.organization=sebasusjaja -Dsonar.branch.name=main -f backend/mundial_2026/pom.xml
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Sebasusjaja_pruebasonar-backend -Dsonar.organization=sebasusjaja -f backend/mundial_2026/pom.xml
 
   frontend:
     name: Analyze Frontend
